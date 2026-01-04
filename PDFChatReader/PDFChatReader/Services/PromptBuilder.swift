@@ -64,4 +64,14 @@ struct PromptBuilder {
         \(question)
         """
     }
+    
+    func explainSimplerUserPrompt(baseUserPrompt: String) -> String {
+        """
+        \(baseUserPrompt)
+        
+        Дополнительная задача:
+        Объясни проще, максимально понятно новичку. 3–6 коротких предложений.
+        Если нужно — приведи простой пример.
+        """
+    }
 }

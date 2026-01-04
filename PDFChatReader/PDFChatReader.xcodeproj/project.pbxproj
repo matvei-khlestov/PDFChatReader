@@ -84,7 +84,7 @@
 				A091BE1D2F098A7100DA4E8B /* App */,
 				A091BE1E2F098A9200DA4E8B /* Presentation */,
 				A091BE202F098B3B00DA4E8B /* Services */,
-				A091BE212F098B5100DA4E8B /* Models */,
+				A091BE692F0B21FF00DA4E8B /* Domain */,
 				A091BE522F0A207800DA4E8B /* Protocols */,
 				A091BE1F2F098AAB00DA4E8B /* Resources */,
 			);
@@ -166,6 +166,14 @@
 				A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		A091BE692F0B21FF00DA4E8B /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE212F098B5100DA4E8B /* Models */,
+			);
+			path = Domain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

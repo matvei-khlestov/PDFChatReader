@@ -15,20 +15,30 @@ struct ChatMessage: Identifiable, Equatable {
         case system
     }
 
+    struct Request: Equatable {
+        let systemPrompt: String
+        let userPrompt: String
+        let temperature: Double
+        let maxTokens: Int
+    }
+
     let id: UUID
     let role: Role
-    let text: String
+    var text: String
     let createdAt: Date
+    var request: Request?
 
     init(
         id: UUID = UUID(),
         role: Role,
         text: String,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        request: Request? = nil
     ) {
         self.id = id
         self.role = role
         self.text = text
         self.createdAt = createdAt
+        self.request = request
     }
 }
