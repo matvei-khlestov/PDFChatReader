@@ -7,7 +7,10 @@
 
 import Foundation
 
+// MARK: - Request
+
 struct YandexGPTCompletionRequest: Encodable {
+    
     let modelUri: String
     let completionOptions: CompletionOptions
     let messages: [Message]
@@ -24,7 +27,10 @@ struct YandexGPTCompletionRequest: Encodable {
     }
 }
 
+// MARK: - Response
+
 struct YandexGPTCompletionResponse: Decodable {
+    
     let result: Result?
     
     struct Result: Decodable {

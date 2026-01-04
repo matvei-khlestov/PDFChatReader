@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct PDFChatReaderApp: App {
+
+    @StateObject private var container = AppContainer()
+
     var body: some Scene {
         WindowGroup {
-            PDFReaderView()
+            PDFReaderView(container: container)
+                .environmentObject(container)
         }
     }
 }
