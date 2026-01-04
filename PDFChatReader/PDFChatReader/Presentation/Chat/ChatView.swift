@@ -13,16 +13,6 @@ struct ChatView: View {
     
     @StateObject private var viewModel: ChatViewModel
     
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    
-    private var layout: Layout {
-        horizontalSizeClass == .regular ? .pad : .phone
-    }
-    
-    private var metrics: Metrics {
-        Metrics(layout: layout)
-    }
-    
     init(
         gpt: YandexGPTServicing,
         modelUri: String,
@@ -70,7 +60,7 @@ struct ChatView: View {
             ScrollView {
                 LazyVStack(
                     alignment: .leading,
-                    spacing: metrics.messagesSpacing
+                    spacing: Metrics.messagesSpacing
                 ) {
                     ForEach(viewModel.messages) { msg in
                         messageBubble(msg)
@@ -78,15 +68,15 @@ struct ChatView: View {
                     }
                     
                     if viewModel.isLoading {
-                        HStack(spacing: metrics.thinkingSpacing) {
+                        HStack(spacing: Metrics.thinkingSpacing) {
                             ProgressView()
                             Text("Thinking…")
-                                .font(metrics.thinkingFont)
+                                .font(Metrics.thinkingFont)
                         }
-                        .padding(.top, metrics.thinkingTopPadding)
+                        .padding(.top, Metrics.thinkingTopPadding)
                     }
                 }
-                .padding(metrics.messagesPadding)
+                .padding(Metrics.messagesPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .onChange(of: viewModel.messages) { _, _ in
@@ -102,9 +92,9 @@ struct ChatView: View {
         HStack {
             if msg.role == .assistant {
                 bubble(text: msg.text, isUser: false)
-                Spacer(minLength: metrics.bubbleSideSpacerMin)
+                Spacer(minLength: Metrics.bubbleSideSpacerMin)
             } else {
-                Spacer(minLength: metrics.bubbleSideSpacerMin)
+                Spacer(minLength: Metrics.bubbleSideSpacerMin)
                 bubble(text: msg.text, isUser: true)
             }
         }
@@ -112,10 +102,10 @@ struct ChatView: View {
     
     private func bubble(text: String, isUser: Bool) -> some View {
         Text(text)
-            .font(metrics.bubbleFont)
-            .lineSpacing(metrics.bubbleLineSpacing)
-            .padding(.vertical, metrics.bubbleVerticalPadding)
-            .padding(.horizontal, metrics.bubbleHorizontalPadding)
+            .font(Metrics.bubbleFont)
+            .lineSpacing(Metrics.bubbleLineSpacing)
+            .padding(.vertical, Metrics.bubbleVerticalPadding)
+            .padding(.horizontal, Metrics.bubbleHorizontalPadding)
             .background(
                 isUser
                 ? Color.blue.opacity(0.18)
@@ -123,52 +113,52 @@ struct ChatView: View {
             )
             .clipShape(
                 RoundedRectangle(
-                    cornerRadius: metrics.bubbleCornerRadius,
+                    cornerRadius: Metrics.bubbleCornerRadius,
                     style: .continuous
                 )
             )
             .frame(
-                maxWidth: metrics.bubbleMaxWidth,
+                maxWidth: Metrics.bubbleMaxWidth,
                 alignment: isUser ? .trailing : .leading
             )
     }
     
     private var quickActionsBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: metrics.quickActionsSpacing) {
+            HStack(spacing: Metrics.quickActionsSpacing) {
                 ForEach(QuickAction.allCases) { action in
                     Button(action.rawValue) {
                         viewModel.runQuickAction(action)
                     }
-                    .font(metrics.quickActionFont)
+                    .font(Metrics.quickActionFont)
                     .buttonStyle(.bordered)
-                    .controlSize(metrics.quickActionControlSize)
+                    .controlSize(Metrics.quickActionControlSize)
                     .disabled(viewModel.isLoading)
                 }
             }
-            .padding(.horizontal, metrics.quickActionsHorizontalPadding)
-            .padding(.vertical, metrics.quickActionsVerticalPadding)
+            .padding(.horizontal, Metrics.quickActionsHorizontalPadding)
+            .padding(.vertical, Metrics.quickActionsVerticalPadding)
         }
     }
     
     private var inputBar: some View {
-        HStack(spacing: metrics.inputSpacing) {
+        HStack(spacing: Metrics.inputSpacing) {
             TextField(
                 "Ask about this page…",
                 text: $viewModel.inputText,
                 axis: .vertical
             )
-            .font(metrics.inputFont)
+            .font(Metrics.inputFont)
             .textFieldStyle(.roundedBorder)
-            .lineLimit(metrics.inputLineLimit)
+            .lineLimit(Metrics.inputLineLimit)
             .disabled(viewModel.isLoading)
             
             Button("Send") {
                 viewModel.sendUserQuestion()
             }
-            .font(metrics.sendButtonFont)
+            .font(Metrics.sendButtonFont)
             .buttonStyle(.borderedProminent)
-            .controlSize(metrics.sendButtonControlSize)
+            .controlSize(Metrics.sendButtonControlSize)
             .disabled(
                 viewModel.isLoading ||
                 viewModel.inputText
@@ -176,127 +166,49 @@ struct ChatView: View {
                     .isEmpty
             )
         }
-        .padding(metrics.inputBarPadding)
+        .padding(Metrics.inputBarPadding)
     }
 }
 
-private extension ChatView {
-    enum Layout {
-        case phone
-        case pad
-    }
+// MARK: - Metrics
+
+private enum Metrics {
     
-    struct Metrics {
-        let layout: Layout
-        
-        // MARK: - Messages list
-        
-        var messagesPadding: CGFloat {
-            layout == .pad ? 22 : 16
-        }
-        
-        var messagesSpacing: CGFloat {
-            layout == .pad ? 14 : 10
-        }
-        
-        // MARK: - Bubble
-        
-        var bubbleFont: Font {
-            layout == .pad
-            ? .system(size: 19, weight: .regular)
-            : .system(size: 16, weight: .regular)
-        }
-        
-        var bubbleLineSpacing: CGFloat {
-            layout == .pad ? 3 : 2
-        }
-        
-        var bubbleVerticalPadding: CGFloat {
-            layout == .pad ? 14 : 10
-        }
-        
-        var bubbleHorizontalPadding: CGFloat {
-            layout == .pad ? 16 : 12
-        }
-        
-        var bubbleCornerRadius: CGFloat {
-            layout == .pad ? 18 : 14
-        }
-        
-        var bubbleSideSpacerMin: CGFloat {
-            layout == .pad ? 120 : 40
-        }
-        
-        var bubbleMaxWidth: CGFloat? {
-            layout == .pad ? 620 : 340
-        }
-        
-        // MARK: - Thinking
-        
-        var thinkingFont: Font {
-            layout == .pad
-            ? .system(size: 16, weight: .regular)
-            : .footnote
-        }
-        
-        var thinkingSpacing: CGFloat { 8 }
-        
-        var thinkingTopPadding: CGFloat {
-            layout == .pad ? 10 : 6
-        }
-        
-        // MARK: - Quick actions
-        
-        var quickActionFont: Font {
-            layout == .pad
-            ? .system(size: 18, weight: .semibold)
-            : .system(size: 15, weight: .semibold)
-        }
-        
-        var quickActionControlSize: ControlSize {
-            layout == .pad ? .large : .regular
-        }
-        
-        var quickActionsSpacing: CGFloat {
-            layout == .pad ? 12 : 10
-        }
-        
-        var quickActionsHorizontalPadding: CGFloat {
-            layout == .pad ? 22 : 16
-        }
-        
-        var quickActionsVerticalPadding: CGFloat {
-            layout == .pad ? 14 : 10
-        }
-        
-        // MARK: - Input bar
-        
-        var inputBarPadding: CGFloat {
-            layout == .pad ? 22 : 16
-        }
-        
-        var inputSpacing: CGFloat {
-            layout == .pad ? 12 : 10
-        }
-        
-        var inputFont: Font {
-            layout == .pad
-            ? .system(size: 19, weight: .regular)
-            : .system(size: 16, weight: .regular)
-        }
-        
-        var inputLineLimit: ClosedRange<Int> {
-            layout == .pad ? 1...4 : 1...3
-        }
-        
-        var sendButtonFont: Font {
-            layout == .pad
-            ? .system(size: 19, weight: .semibold)
-            : .system(size: 16, weight: .semibold)
-        }
-        
-        var sendButtonControlSize: ControlSize {
-            layout == .pad ? .extraLarge : .regular
-        }
-    }
+    // MARK: - Messages list
+    
+    static let messagesPadding: CGFloat = 16
+    static let messagesSpacing: CGFloat = 10
+    
+    // MARK: - Bubble
+    
+    static let bubbleFont: Font = .system(size: 16, weight: .regular)
+    static let bubbleLineSpacing: CGFloat = 2
+    static let bubbleVerticalPadding: CGFloat = 10
+    static let bubbleHorizontalPadding: CGFloat = 12
+    static let bubbleCornerRadius: CGFloat = 14
+    static let bubbleSideSpacerMin: CGFloat = 40
+    static let bubbleMaxWidth: CGFloat? = 340
+    
+    // MARK: - Thinking
+    
+    static let thinkingFont: Font = .footnote
+    static let thinkingSpacing: CGFloat = 8
+    static let thinkingTopPadding: CGFloat = 6
+    
+    // MARK: - Quick actions
+    
+    static let quickActionFont: Font = .system(size: 15, weight: .semibold)
+    static let quickActionControlSize: ControlSize = .regular
+    static let quickActionsSpacing: CGFloat = 10
+    static let quickActionsHorizontalPadding: CGFloat = 16
+    static let quickActionsVerticalPadding: CGFloat = 10
+    
+    // MARK: - Input bar
+    
+    static let inputBarPadding: CGFloat = 16
+    static let inputSpacing: CGFloat = 10
+    static let inputFont: Font = .system(size: 16, weight: .regular)
+    static let inputLineLimit: ClosedRange<Int> = 1...3
+    static let sendButtonFont: Font = .system(size: 16, weight: .semibold)
+    static let sendButtonControlSize: ControlSize = .regular
 }

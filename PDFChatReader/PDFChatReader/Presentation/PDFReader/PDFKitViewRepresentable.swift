@@ -9,52 +9,65 @@ import SwiftUI
 import PDFKit
 
 struct PDFKitViewRepresentable: UIViewRepresentable {
+    
     let document: PDFDocument
     @Binding var currentPageIndex: Int
     
     func makeUIView(context: Context) -> PDFView {
         let pdfView = PDFView()
-        pdfView.document = document
         pdfView.autoScales = true
         pdfView.displayMode = .singlePageContinuous
         pdfView.displayDirection = .vertical
-        pdfView.usePageViewController(true, withViewOptions: nil)
+        pdfView.usePageViewController(false, withViewOptions: nil)
+        
+        context.coordinator.pdfView = pdfView
         
         NotificationCenter.default.addObserver(
             context.coordinator,
-            selector: #selector(Coordinator.pageChanged),
+            selector: #selector(PDFViewPageObserver.pageChanged),
             name: Notification.Name.PDFViewPageChanged,
             object: pdfView
         )
         
-        context.coordinator.pdfView = pdfView
+        pdfView.document = document
+        goToFirstPageIfPossible(pdfView)
+        
         return pdfView
     }
     
     func updateUIView(_ uiView: PDFView, context: Context) {
-        // Если нужно будет программно прыгать на страницу — добавим позже.
+        guard uiView.document !== document else { return }
+        
+        uiView.document = nil
+        uiView.document = document
+        goToFirstPageIfPossible(uiView)
+        
+        DispatchQueue.main.async {
+            if self.currentPageIndex != 0 {
+                self.currentPageIndex = 0
+            }
+        }
     }
     
-    func makeCoordinator() -> Coordinator {
-        Coordinator(currentPageIndex: $currentPageIndex)
+    static func dismantleUIView(_ uiView: PDFView, coordinator: PDFViewPageObserver) {
+        let observedObject = coordinator.pdfView ?? uiView
+        
+        NotificationCenter.default.removeObserver(
+            coordinator,
+            name: Notification.Name.PDFViewPageChanged,
+            object: observedObject
+        )
+        
+        coordinator.pdfView = nil
+        uiView.document = nil
     }
     
-    final class Coordinator: NSObject {
-        weak var pdfView: PDFView?
-        private var currentPageIndex: Binding<Int>
-        
-        init(currentPageIndex: Binding<Int>) {
-            self.currentPageIndex = currentPageIndex
-        }
-        
-        @objc func pageChanged() {
-            guard let pdfView,
-                  let page = pdfView.currentPage,
-                  let doc = pdfView.document
-            else { return }
-            
-            let index = doc.index(for: page)
-            currentPageIndex.wrappedValue = max(0, index)
-        }
+    func makeCoordinator() -> PDFViewPageObserver {
+        PDFViewPageObserver(currentPageIndex: $currentPageIndex)
+    }
+    
+    private func goToFirstPageIfPossible(_ pdfView: PDFView) {
+        guard let firstPage = pdfView.document?.page(at: 0) else { return }
+        pdfView.go(to: firstPage)
     }
 }

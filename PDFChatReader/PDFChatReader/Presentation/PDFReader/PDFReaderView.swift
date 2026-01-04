@@ -10,285 +10,210 @@ import PDFKit
 import UniformTypeIdentifiers
 
 struct PDFReaderView: View {
-    
+
+    // MARK: - Dependencies
+
     @EnvironmentObject private var container: AppContainer
-    
+
+    // MARK: - State
+
     @StateObject private var viewModel: PDFReaderViewModel
-    
     @State private var isImporterPresented = false
     @State private var importError: String?
-    
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    
-    private var layout: Layout {
-        horizontalSizeClass == .regular ? .pad : .phone
-    }
-    
-    private var metrics: Metrics {
-        Metrics(layout: layout)
-    }
-    
+
+    // MARK: - Init
+
     init(container: AppContainer) {
-        _viewModel = StateObject(wrappedValue: container.makePDFReaderViewModel())
+        _viewModel = StateObject(
+            wrappedValue: container.makePDFReaderViewModel()
+        )
     }
-    
+
+    // MARK: - Body
+
     var body: some View {
         NavigationStack {
-            Group {
-                if let doc = viewModel.document {
-                    PDFKitViewRepresentable(
-                        document: doc,
-                        currentPageIndex: $viewModel.currentPageIndex
-                    )
-                    .onChange(of: viewModel.currentPageIndex) { _, _ in
-                        viewModel.updatePageContext()
-                    }
-                    .overlay(alignment: .bottom) {
-                        pageIndicator
-                    }
-                } else {
-                    emptyState
-                }
-            }
-            .navigationTitle("PDF Reader")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Open") { isImporterPresented = true }
-                        .font(metrics.toolbarFont)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Chat") {
-                        viewModel.isChatPresented = true
-                    }
-                    .font(metrics.toolbarFont)
-                    .disabled(viewModel.document == nil)
-                }
-            }
-            .fileImporter(
-                isPresented: $isImporterPresented,
-                allowedContentTypes: [.pdf],
-                allowsMultipleSelection: false
-            ) { result in
-                switch result {
-                case .success(let urls):
-                    guard let url = urls.first else { return }
-                    viewModel.setDocument(from: url)
-                case .failure(let error):
-                    importError = error.localizedDescription
-                }
-            }
-            .alert(
-                "Import failed",
-                isPresented: Binding(
-                    get: { importError != nil },
-                    set: { _ in importError = nil }
+            content
+                .navigationTitle("PDF Reader")
+                .toolbar { toolbarContent }
+                .fileImporter(
+                    isPresented: $isImporterPresented,
+                    allowedContentTypes: [.pdf],
+                    allowsMultipleSelection: false,
+                    onCompletion: handleImportResult(_:)
                 )
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(importError ?? "")
-            }
-            .sheet(isPresented: $viewModel.isChatPresented) {
-                if viewModel.document != nil {
-                    ChatView(
-                        gpt: container.gptService,
-                        modelUri: container.modelUri,
-                        contextProvider: { viewModel.currentPageText }
+                .alert(
+                    "Import failed",
+                    isPresented: Binding(
+                        get: { importError != nil },
+                        set: { _ in importError = nil }
                     )
+                ) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(importError ?? "")
                 }
+                .sheet(isPresented: $viewModel.isChatPresented) {
+                    chatSheet
+                }
+        }
+    }
+
+    // MARK: - Content
+
+    private var content: some View {
+        Group {
+            if let document = viewModel.document {
+                PDFKitViewRepresentable(
+                    document: document,
+                    currentPageIndex: $viewModel.currentPageIndex
+                )
+                .onChange(of: viewModel.currentPageIndex) { _, _ in
+                    viewModel.updatePageContext()
+                }
+                .overlay(alignment: .bottom) {
+                    pageIndicator
+                }
+            } else {
+                emptyState
             }
         }
     }
-    
-    private var emptyState: some View {
-        VStack(spacing: metrics.emptyStateSpacing) {
-            Image(systemName: "doc.richtext")
-                .font(.system(size: metrics.emptyStateIconSize, weight: .semibold))
-                .symbolRenderingMode(.hierarchical)
-            
-            Text("Open a PDF to start")
-                .font(metrics.emptyStateTitleFont)
-                .multilineTextAlignment(.center)
-            
-            Button("Open PDF") { isImporterPresented = true }
-                .font(metrics.primaryButtonFont)
-                .buttonStyle(.borderedProminent)
-                .controlSize(metrics.primaryButtonControlSize)
+
+    // MARK: - Toolbar
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button("Open") {
+                isImporterPresented = true
+            }
+            .font(Metrics.toolbarFont)
         }
-        .padding(metrics.emptyStatePadding)
-        .frame(maxWidth: metrics.emptyStateMaxWidth)
+
+        ToolbarItem(placement: .topBarTrailing) {
+            Button("Chat") {
+                viewModel.isChatPresented = true
+            }
+            .font(Metrics.toolbarFont)
+            .disabled(viewModel.document == nil)
+        }
+    }
+
+    // MARK: - Import
+
+    private func handleImportResult(_ result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            viewModel.setDocument(from: url)
+
+        case .failure(let error):
+            importError = error.localizedDescription
+        }
+    }
+
+    // MARK: - Sheet
+
+    @ViewBuilder
+    private var chatSheet: some View {
+        if viewModel.document != nil {
+            ChatView(
+                gpt: container.gptService,
+                modelUri: container.modelUri,
+                contextProvider: { viewModel.currentPageText }
+            )
+        }
+    }
+
+    // MARK: - Empty state
+
+    private var emptyState: some View {
+        VStack(spacing: Metrics.emptyStateSpacing) {
+            Image(systemName: "doc.richtext")
+                .font(
+                    .system(
+                        size: Metrics.emptyStateIconSize,
+                        weight: .semibold
+                    )
+                )
+                .symbolRenderingMode(.hierarchical)
+
+            Text("Open a PDF to start")
+                .font(Metrics.emptyStateTitleFont)
+                .multilineTextAlignment(.center)
+
+            Button("Open PDF") {
+                isImporterPresented = true
+            }
+            .font(Metrics.primaryButtonFont)
+            .buttonStyle(.borderedProminent)
+            .controlSize(Metrics.primaryButtonControlSize)
+        }
+        .padding(Metrics.emptyStatePadding)
+        .frame(maxWidth: Metrics.emptyStateMaxWidth)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
+    // MARK: - Page indicator
+
     private var pageIndicator: some View {
-        HStack(spacing: metrics.pageIndicatorSpacing) {
+        HStack(spacing: Metrics.pageIndicatorSpacing) {
             Text("Page \(viewModel.currentPageIndex + 1)")
-                .font(metrics.pageIndicatorFont)
-            
+                .font(Metrics.pageIndicatorFont)
+
             Spacer(minLength: 0)
         }
-        .padding(.vertical, metrics.pageIndicatorVerticalPadding)
-        .padding(.horizontal, metrics.pageIndicatorHorizontalPadding)
+        .padding(.vertical, Metrics.pageIndicatorVerticalPadding)
+        .padding(.horizontal, Metrics.pageIndicatorHorizontalPadding)
         .background(.ultraThinMaterial)
         .clipShape(
             RoundedRectangle(
-                cornerRadius: metrics.pageIndicatorCornerRadius,
+                cornerRadius: Metrics.pageIndicatorCornerRadius,
                 style: .continuous
             )
         )
-        .padding(metrics.pageIndicatorOuterPadding)
-        .frame(maxWidth: metrics.pageIndicatorMaxWidth, alignment: .leading)
+        .padding(Metrics.pageIndicatorOuterPadding)
+        .frame(
+            maxWidth: Metrics.pageIndicatorMaxWidth,
+            alignment: .leading
+        )
         .frame(maxWidth: .infinity, alignment: .bottom)
     }
 }
 
-private extension PDFReaderView {
-    
-    enum Layout {
-        case phone
-        case pad
-    }
-    
-    struct Metrics {
-        
-        // MARK: - Properties
-        
-        let layout: Layout
-        
-        // MARK: - Fonts
-        
-        var toolbarFont: Font {
-            switch layout {
-            case .phone:
-                return .system(size: 17, weight: .semibold)
-            case .pad:
-                return .system(size: 22, weight: .semibold)
-            }
-        }
-        
-        var emptyStateTitleFont: Font {
-            switch layout {
-            case .phone:
-                return .system(size: 20, weight: .semibold)
-            case .pad:
-                return .system(size: 28, weight: .semibold)
-            }
-        }
-        
-        var primaryButtonFont: Font {
-            switch layout {
-            case .phone:
-                return .system(size: 17, weight: .semibold)
-            case .pad:
-                return .system(size: 21, weight: .semibold)
-            }
-        }
-        
-        var pageIndicatorFont: Font {
-            switch layout {
-            case .phone:
-                return .system(size: 13, weight: .semibold)
-            case .pad:
-                return .system(size: 16, weight: .semibold)
-            }
-        }
-        
-        // MARK: - Empty state
-        
-        var emptyStateMaxWidth: CGFloat {
-            switch layout {
-            case .phone:
-                return 360
-            case .pad:
-                return 600
-            }
-        }
-        
-        var emptyStatePadding: CGFloat {
-            switch layout {
-            case .phone:
-                return 20
-            case .pad:
-                return 34
-            }
-        }
-        
-        var emptyStateSpacing: CGFloat {
-            switch layout {
-            case .phone:
-                return 12
-            case .pad:
-                return 20
-            }
-        }
-        
-        var emptyStateIconSize: CGFloat {
-            switch layout {
-            case .phone:
-                return 44
-            case .pad:
-                return 66
-            }
-        }
-        
-        var primaryButtonControlSize: ControlSize {
-            switch layout {
-            case .phone:
-                return .regular
-            case .pad:
-                return .extraLarge
-            }
-        }
-        
-        // MARK: - Page indicator
-        
-        var pageIndicatorSpacing: CGFloat {
-            return 8
-        }
-        
-        var pageIndicatorVerticalPadding: CGFloat {
-            switch layout {
-            case .phone:
-                return 10
-            case .pad:
-                return 14
-            }
-        }
-        
-        var pageIndicatorHorizontalPadding: CGFloat {
-            switch layout {
-            case .phone:
-                return 10
-            case .pad:
-                return 16
-            }
-        }
-        
-        var pageIndicatorCornerRadius: CGFloat {
-            switch layout {
-            case .phone:
-                return 12
-            case .pad:
-                return 16
-            }
-        }
-        
-        var pageIndicatorOuterPadding: CGFloat {
-            switch layout {
-            case .phone:
-                return 14
-            case .pad:
-                return 18
-            }
-        }
-        
-        var pageIndicatorMaxWidth: CGFloat? {
-            switch layout {
-            case .phone:
-                return 360
-            case .pad:
-                return 600
-            }
-        }
-    }
+// MARK: - Metrics
+
+private enum Metrics {
+
+    // MARK: - Fonts
+
+    static let toolbarFont: Font =
+        .system(size: 17, weight: .semibold)
+
+    static let emptyStateTitleFont: Font =
+        .system(size: 20, weight: .semibold)
+
+    static let primaryButtonFont: Font =
+        .system(size: 17, weight: .semibold)
+
+    static let pageIndicatorFont: Font =
+        .system(size: 13, weight: .semibold)
+
+    // MARK: - Empty state
+
+    static let emptyStateMaxWidth: CGFloat = 360
+    static let emptyStatePadding: CGFloat = 20
+    static let emptyStateSpacing: CGFloat = 12
+    static let emptyStateIconSize: CGFloat = 44
+    static let primaryButtonControlSize: ControlSize = .regular
+
+    // MARK: - Page indicator
+
+    static let pageIndicatorSpacing: CGFloat = 8
+    static let pageIndicatorVerticalPadding: CGFloat = 10
+    static let pageIndicatorHorizontalPadding: CGFloat = 10
+    static let pageIndicatorCornerRadius: CGFloat = 12
+    static let pageIndicatorOuterPadding: CGFloat = 14
+    static let pageIndicatorMaxWidth: CGFloat? = 360
 }

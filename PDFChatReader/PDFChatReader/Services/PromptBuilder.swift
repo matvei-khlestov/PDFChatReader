@@ -11,9 +11,10 @@ struct PromptBuilder {
     
     func systemPrompt() -> String {
         """
-        You are a helpful assistant. Answer strictly using the provided PDF context.
-        If the context is insufficient, ask a short clarifying question.
-        Keep the answer concise and well-structured.
+        Ты — полезный помощник.
+        Отвечай строго на основе предоставленного текста из PDF.
+        Если информации в тексте недостаточно — задай короткий уточняющий вопрос.
+        Отвечай кратко, логично и структурировано.
         """
     }
     
@@ -24,28 +25,29 @@ struct PromptBuilder {
         switch action {
         case .summarize:
             return """
-            Context (PDF page text):
+            Контекст (текст страницы PDF):
             \(context)
             
-            Task: Summarize the page in 5-7 bullet points.
+            Задача: Сформулируй краткое резюме страницы в виде 5–7 пунктов.
             """
             
         case .explain:
             return """
-            Context (PDF page text):
+            Контекст (текст страницы PDF):
             \(context)
             
-            Task: Explain the content in simple terms (as if to a beginner), using short paragraphs.
+            Задача: Объясни содержание простым и понятным языком,
+            как если бы ты объяснял новичку. Используй короткие абзацы.
             """
             
         case .keyPoints:
             return """
-            Context (PDF page text):
+            Контекст (текст страницы PDF):
             \(context)
             
-            Task: Extract key points and important terms. Output:
-            1) Key points (bullets)
-            2) Important terms (term — short definition)
+            Задача:
+            1) Выдели ключевые идеи (в виде списка)
+            2) Выдели важные термины (термин — краткое определение)
             """
         }
     }
@@ -55,10 +57,10 @@ struct PromptBuilder {
         context: String
     ) -> String {
         """
-        Context (PDF page text):
+        Контекст (текст страницы PDF):
         \(context)
         
-        Question:
+        Вопрос пользователя:
         \(question)
         """
     }
