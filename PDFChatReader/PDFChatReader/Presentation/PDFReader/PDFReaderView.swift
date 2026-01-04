@@ -10,7 +10,10 @@ import PDFKit
 import UniformTypeIdentifiers
 
 struct PDFReaderView: View {
-    @StateObject private var viewModel = PDFReaderViewModel()
+    
+    @EnvironmentObject private var container: AppContainer
+    
+    @StateObject private var viewModel: PDFReaderViewModel
     
     @State private var isImporterPresented = false
     @State private var importError: String?
@@ -23,6 +26,10 @@ struct PDFReaderView: View {
     
     private var metrics: Metrics {
         Metrics(layout: layout)
+    }
+    
+    init(container: AppContainer) {
+        _viewModel = StateObject(wrappedValue: container.makePDFReaderViewModel())
     }
     
     var body: some View {
@@ -70,18 +77,24 @@ struct PDFReaderView: View {
                     importError = error.localizedDescription
                 }
             }
-            .alert("Import failed", isPresented: Binding(get: {
-                importError != nil
-            }, set: {
-                _ in importError = nil
-            })) {
+            .alert(
+                "Import failed",
+                isPresented: Binding(
+                    get: { importError != nil },
+                    set: { _ in importError = nil }
+                )
+            ) {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(importError ?? "")
             }
             .sheet(isPresented: $viewModel.isChatPresented) {
                 if viewModel.document != nil {
-                    ChatView(contextProvider: { viewModel.currentPageText })
+                    ChatView(
+                        gpt: container.gptService,
+                        modelUri: container.modelUri,
+                        contextProvider: { viewModel.currentPageText }
+                    )
                 }
             }
         }
@@ -117,7 +130,12 @@ struct PDFReaderView: View {
         .padding(.vertical, metrics.pageIndicatorVerticalPadding)
         .padding(.horizontal, metrics.pageIndicatorHorizontalPadding)
         .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: metrics.pageIndicatorCornerRadius, style: .continuous))
+        .clipShape(
+            RoundedRectangle(
+                cornerRadius: metrics.pageIndicatorCornerRadius,
+                style: .continuous
+            )
+        )
         .padding(metrics.pageIndicatorOuterPadding)
         .frame(maxWidth: metrics.pageIndicatorMaxWidth, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .bottom)
@@ -125,12 +143,16 @@ struct PDFReaderView: View {
 }
 
 private extension PDFReaderView {
+    
     enum Layout {
         case phone
         case pad
     }
     
     struct Metrics {
+        
+        // MARK: - Properties
+        
         let layout: Layout
         
         // MARK: - Fonts
@@ -171,7 +193,7 @@ private extension PDFReaderView {
             }
         }
         
-        // MARK: - Layout
+        // MARK: - Empty state
         
         var emptyStateMaxWidth: CGFloat {
             switch layout {
@@ -218,7 +240,11 @@ private extension PDFReaderView {
             }
         }
         
-        var pageIndicatorSpacing: CGFloat { 8 }
+        // MARK: - Page indicator
+        
+        var pageIndicatorSpacing: CGFloat {
+            return 8
+        }
         
         var pageIndicatorVerticalPadding: CGFloat {
             switch layout {
@@ -265,8 +291,4 @@ private extension PDFReaderView {
             }
         }
     }
-}
-
-#Preview {
-    PDFReaderView()
 }

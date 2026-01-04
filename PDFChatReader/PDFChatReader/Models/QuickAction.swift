@@ -8,9 +8,12 @@
 import Foundation
 
 enum QuickAction: String, CaseIterable, Identifiable {
+
     case summarize = "Summarize"
     case explain = "Explain"
     case keyPoints = "Key points"
 
-    var id: String { rawValue }
+    var id: String {
+        rawValue
+    }
 }

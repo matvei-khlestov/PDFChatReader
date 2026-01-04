@@ -20,6 +20,11 @@
 		A091BE352F098F6800DA4E8B /* PDFReaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE342F098F6800DA4E8B /* PDFReaderViewModel.swift */; };
 		A091BE372F09902500DA4E8B /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE362F09902500DA4E8B /* ChatViewModel.swift */; };
 		A091BE392F09909900DA4E8B /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE382F09909900DA4E8B /* ChatView.swift */; };
+		A091BE4D2F0A1EA100DA4E8B /* AppSecrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE4C2F0A1EA100DA4E8B /* AppSecrets.swift */; };
+		A091BE4F2F0A1EBF00DA4E8B /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE4E2F0A1EBF00DA4E8B /* AppContainer.swift */; };
+		A091BE512F0A1FF000DA4E8B /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE502F0A1FF000DA4E8B /* ServiceError.swift */; };
+		A091BE542F0A20A900DA4E8B /* YandexGPTServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE532F0A20A900DA4E8B /* YandexGPTServicing.swift */; };
+		A091BE562F0A20BF00DA4E8B /* PDFContextProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +42,11 @@
 		A091BE342F098F6800DA4E8B /* PDFReaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReaderViewModel.swift; sourceTree = "<group>"; };
 		A091BE362F09902500DA4E8B /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		A091BE382F09909900DA4E8B /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		A091BE4C2F0A1EA100DA4E8B /* AppSecrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSecrets.swift; sourceTree = "<group>"; };
+		A091BE4E2F0A1EBF00DA4E8B /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		A091BE502F0A1FF000DA4E8B /* ServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
+		A091BE532F0A20A900DA4E8B /* YandexGPTServicing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexGPTServicing.swift; sourceTree = "<group>"; };
+		A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFContextProviding.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +83,7 @@
 				A091BE1E2F098A9200DA4E8B /* Presentation */,
 				A091BE202F098B3B00DA4E8B /* Services */,
 				A091BE212F098B5100DA4E8B /* Models */,
+				A091BE522F0A207800DA4E8B /* Protocols */,
 				A091BE1F2F098AAB00DA4E8B /* Resources */,
 			);
 			path = PDFChatReader;
@@ -82,6 +93,8 @@
 			isa = PBXGroup;
 			children = (
 				A091BE182F098A4E00DA4E8B /* PDFChatReaderApp.swift */,
+				A091BE4C2F0A1EA100DA4E8B /* AppSecrets.swift */,
+				A091BE4E2F0A1EBF00DA4E8B /* AppContainer.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -110,6 +123,7 @@
 				A091BE2C2F098E4700DA4E8B /* PromptBuilder.swift */,
 				A091BE2E2F098E7900DA4E8B /* PDFContextProvider.swift */,
 				A091BE302F098E9E00DA4E8B /* YandexGPTService.swift */,
+				A091BE502F0A1FF000DA4E8B /* ServiceError.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -148,6 +162,15 @@
 			children = (
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		A091BE522F0A207800DA4E8B /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE532F0A20A900DA4E8B /* YandexGPTServicing.swift */,
+				A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,9 +245,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A091BE512F0A1FF000DA4E8B /* ServiceError.swift in Sources */,
+				A091BE542F0A20A900DA4E8B /* YandexGPTServicing.swift in Sources */,
 				A091BE272F098DC700DA4E8B /* ChatMessage.swift in Sources */,
 				A091BE2D2F098E4700DA4E8B /* PromptBuilder.swift in Sources */,
 				A091BE1A2F098A4E00DA4E8B /* PDFReaderView.swift in Sources */,
+				A091BE4D2F0A1EA100DA4E8B /* AppSecrets.swift in Sources */,
 				A091BE332F098F1B00DA4E8B /* PDFKitViewRepresentable.swift in Sources */,
 				A091BE392F09909900DA4E8B /* ChatView.swift in Sources */,
 				A091BE1B2F098A4E00DA4E8B /* PDFChatReaderApp.swift in Sources */,
@@ -233,7 +259,9 @@
 				A091BE2F2F098E7900DA4E8B /* PDFContextProvider.swift in Sources */,
 				A091BE312F098E9E00DA4E8B /* YandexGPTService.swift in Sources */,
 				A091BE372F09902500DA4E8B /* ChatViewModel.swift in Sources */,
+				A091BE562F0A20BF00DA4E8B /* PDFContextProviding.swift in Sources */,
 				A091BE292F098DEC00DA4E8B /* QuickAction.swift in Sources */,
+				A091BE4F2F0A1EBF00DA4E8B /* AppContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

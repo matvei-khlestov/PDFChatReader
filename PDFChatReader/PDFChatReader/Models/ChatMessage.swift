@@ -8,6 +8,7 @@
 import Foundation
 
 struct ChatMessage: Identifiable, Equatable {
+
     enum Role: String {
         case user
         case assistant
@@ -19,7 +20,12 @@ struct ChatMessage: Identifiable, Equatable {
     let text: String
     let createdAt: Date
 
-    init(id: UUID = UUID(), role: Role, text: String, createdAt: Date = Date()) {
+    init(
+        id: UUID = UUID(),
+        role: Role,
+        text: String,
+        createdAt: Date = Date()
+    ) {
         self.id = id
         self.role = role
         self.text = text

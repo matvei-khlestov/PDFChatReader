@@ -8,18 +8,18 @@
 import Foundation
 import Combine
 
-@MainActor
 final class ChatViewModel: ObservableObject {
+    
     @Published var messages: [ChatMessage] = []
     @Published var inputText: String = ""
     @Published var isLoading: Bool = false
     @Published var errorText: String?
-
+    
     private let gpt: YandexGPTServicing
     private let promptBuilder: PromptBuilder
     private let modelUri: String
     private let contextProvider: () -> String
-
+    
     init(
         gpt: YandexGPTServicing,
         modelUri: String,
@@ -30,69 +30,92 @@ final class ChatViewModel: ObservableObject {
         self.modelUri = modelUri
         self.contextProvider = contextProvider
         self.promptBuilder = promptBuilder
-
-        messages = [
-            ChatMessage(role: .assistant, text: "Ask about the current PDF page, or use quick actions below.")
+        
+        self.messages = [
+            ChatMessage(
+                role: .assistant,
+                text: "Ask about the current PDF page, or use quick actions below."
+            )
         ]
     }
-
+    
     func runQuickAction(_ action: QuickAction) {
         let context = contextProvider()
         guard !context.isEmpty else {
             errorText = "No text found on this page."
             return
         }
-
+        
         let system = promptBuilder.systemPrompt()
         let user = promptBuilder.quickActionPrompt(action, context: context)
-
-        Task { await send(system: system, user: user) }
+        
+        Task {
+            await send(system: system, user: user)
+        }
     }
-
+    
     func sendUserQuestion() {
         let question = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !question.isEmpty else { return }
-
+        
         inputText = ""
-
+        
         let context = contextProvider()
         if context.isEmpty {
             errorText = "No text found on this page."
             return
         }
-
+        
         let system = promptBuilder.systemPrompt()
         let user = promptBuilder.chatPrompt(question: question, context: context)
-
-        Task { await send(system: system, user: user, displayUserText: question) }
-    }
-
-    private func send(system: String, user: String, displayUserText: String? = nil) async {
-        isLoading = true
-        errorText = nil
-
-        if let displayUserText {
-            messages.append(.init(role: .user, text: displayUserText))
-        } else {
-            messages.append(.init(role: .user, text: user))
+        
+        Task {
+            await send(system: system, user: user, displayUserText: question)
         }
-
+    }
+    
+    private func send(
+        system: String,
+        user: String,
+        displayUserText: String? = nil
+    ) async {
+        await MainActor.run {
+            self.isLoading = true
+            self.errorText = nil
+            
+            if let displayUserText {
+                self.messages.append(
+                    ChatMessage(role: .user, text: displayUserText)
+                )
+            } else {
+                self.messages.append(
+                    ChatMessage(role: .user, text: user)
+                )
+            }
+        }
+        
         do {
             let response = try await gpt.complete(
                 modelUri: modelUri,
                 messages: [
-                    .init(role: "system", text: system),
-                    .init(role: "user", text: user)
+                    ChatMessage(role: .system, text: system),
+                    ChatMessage(role: .user, text: user)
                 ],
                 temperature: 0.3,
                 maxTokens: 900
             )
-
-            messages.append(.init(role: .assistant, text: response))
+            
+            await MainActor.run {
+                self.messages.append(
+                    ChatMessage(role: .assistant, text: response)
+                )
+                self.isLoading = false
+            }
         } catch {
-            errorText = error.localizedDescription
+            await MainActor.run {
+                self.errorText = error.localizedDescription
+                self.isLoading = false
+            }
         }
-
-        isLoading = false
     }
 }
