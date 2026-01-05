@@ -9,9 +9,6 @@ import Foundation
 import PDFKit
 
 protocol PDFContextProviding {
-
-    func pageText(
-        document: PDFDocument,
-        pageIndex: Int
-    ) -> String
+    func pageText(document: PDFDocument, pageIndex: Int) -> String
+    func documentText(document: PDFDocument) -> String
 }

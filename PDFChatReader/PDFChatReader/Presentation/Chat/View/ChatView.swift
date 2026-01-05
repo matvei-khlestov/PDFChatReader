@@ -8,34 +8,32 @@
 import SwiftUI
 
 struct ChatView: View {
-
-    let contextProvider: () -> String
+    
+    // MARK: - State
+    
     @StateObject private var viewModel: ChatViewModel
-
+    
+    // MARK: - Init
+    
     init(
-        gpt: YandexGPTServicing,
-        modelUri: String,
-        contextProvider: @escaping () -> String
+        viewModel: ChatViewModel
     ) {
-        self.contextProvider = contextProvider
-        _viewModel = StateObject(
-            wrappedValue: ChatViewModel(
-                gpt: gpt,
-                modelUri: modelUri,
-                contextProvider: contextProvider
-            )
-        )
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
-
+    
+    // MARK: - Body
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 messagesList
-
+                
                 Divider()
-
+                
+                scopePicker
+                
                 quickActionsBar
-
+                
                 inputBar
             }
             .navigationTitle("Chat")
@@ -53,7 +51,9 @@ struct ChatView: View {
             }
         }
     }
-
+    
+    // MARK: - Messages List
+    
     private var messagesList: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -65,7 +65,7 @@ struct ChatView: View {
                         messageBubble(msg)
                             .id(msg.id)
                     }
-
+                    
                     if viewModel.isLoading {
                         HStack(spacing: Metrics.thinkingSpacing) {
                             ProgressView()
@@ -86,7 +86,9 @@ struct ChatView: View {
             }
         }
     }
-
+    
+    // MARK: - Message Bubble
+    
     private func messageBubble(_ msg: ChatMessage) -> some View {
         HStack {
             if msg.role == .assistant {
@@ -98,9 +100,37 @@ struct ChatView: View {
             }
         }
     }
-
-    private func bubble(text: String, isUser: Bool, message: ChatMessage) -> some View {
-        let view = Text(text)
+    
+    // MARK: - Bubble Content
+    
+    @ViewBuilder
+    private func bubble(
+        text: String,
+        isUser: Bool,
+        message: ChatMessage
+    ) -> some View {
+        let base = bubbleBase(text: text, isUser: isUser)
+        
+        if message.role == .assistant {
+            base.contextMenu {
+                AssistantMessageMenu(
+                    isLoading: viewModel.isLoading,
+                    message: message,
+                    onAction: { action, message in
+                        viewModel.handleAssistantAction(action, message: message)
+                    }
+                )
+            }
+        } else {
+            base
+        }
+    }
+    
+    private func bubbleBase(
+        text: String,
+        isUser: Bool
+    ) -> some View {
+        Text(text)
             .font(Metrics.bubbleFont)
             .lineSpacing(Metrics.bubbleLineSpacing)
             .padding(.vertical, Metrics.bubbleVerticalPadding)
@@ -120,38 +150,27 @@ struct ChatView: View {
                 maxWidth: Metrics.bubbleMaxWidth,
                 alignment: isUser ? .trailing : .leading
             )
-
-        guard message.role == .assistant else { return AnyView(view) }
-
-        return AnyView(
-            view.contextMenu {
-                Button {
-                    viewModel.handleAssistantAction(.copy, message: message)
-                } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
-                }
-
-                ShareLink(item: message.text) {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                }
-
-                Button {
-                    viewModel.handleAssistantAction(.regenerate, message: message)
-                } label: {
-                    Label("Regenerate", systemImage: "arrow.clockwise")
-                }
-                .disabled(viewModel.isLoading || message.request == nil)
-
-                Button {
-                    viewModel.handleAssistantAction(.explainSimpler, message: message)
-                } label: {
-                    Label("Explain simpler", systemImage: "wand.and.stars")
-                }
-                .disabled(viewModel.isLoading || message.request == nil)
-            }
-        )
     }
-
+    
+    // MARK: - Scope Picker
+    
+    private var scopePicker: some View {
+        Picker("", selection: $viewModel.scope) {
+            ForEach(ChatScope.allCases) { scope in
+                Text(scope.rawValue).tag(scope)
+            }
+        }
+        .pickerStyle(.segmented)
+        .disabled(viewModel.isLoading)
+        .onChange(of: viewModel.scope) { _, newValue in
+            viewModel.updateScope(newValue)
+        }
+        .padding(.horizontal, Metrics.scopeHorizontalPadding)
+        .padding(.vertical, Metrics.scopeVerticalPadding)
+    }
+    
+    // MARK: - Quick Actions
+    
     private var quickActionsBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: Metrics.quickActionsSpacing) {
@@ -169,11 +188,15 @@ struct ChatView: View {
             .padding(.vertical, Metrics.quickActionsVerticalPadding)
         }
     }
-
+    
+    // MARK: - Input
+    
     private var inputBar: some View {
         HStack(spacing: Metrics.inputSpacing) {
             TextField(
-                "Ask about this page…",
+                viewModel.scope == .page
+                ? "Ask about this page…"
+                : "Ask about this document…",
                 text: $viewModel.inputText,
                 axis: .vertical
             )
@@ -181,7 +204,7 @@ struct ChatView: View {
             .textFieldStyle(.roundedBorder)
             .lineLimit(Metrics.inputLineLimit)
             .disabled(viewModel.isLoading)
-
+            
             Button("Send") {
                 viewModel.sendUserQuestion()
             }
@@ -202,14 +225,14 @@ struct ChatView: View {
 // MARK: - Metrics
 
 private enum Metrics {
-
+    
     // MARK: - Messages list
-
+    
     static let messagesPadding: CGFloat = 16
     static let messagesSpacing: CGFloat = 10
-
+    
     // MARK: - Bubble
-
+    
     static let bubbleFont: Font = .system(size: 16, weight: .regular)
     static let bubbleLineSpacing: CGFloat = 2
     static let bubbleVerticalPadding: CGFloat = 10
@@ -217,23 +240,28 @@ private enum Metrics {
     static let bubbleCornerRadius: CGFloat = 14
     static let bubbleSideSpacerMin: CGFloat = 40
     static let bubbleMaxWidth: CGFloat? = 340
-
+    
     // MARK: - Thinking
-
+    
     static let thinkingFont: Font = .footnote
     static let thinkingSpacing: CGFloat = 8
     static let thinkingTopPadding: CGFloat = 6
-
+    
+    // MARK: - Scope picker
+    
+    static let scopeHorizontalPadding: CGFloat = 16
+    static let scopeVerticalPadding: CGFloat = 10
+    
     // MARK: - Quick actions
-
+    
     static let quickActionFont: Font = .system(size: 15, weight: .semibold)
     static let quickActionControlSize: ControlSize = .regular
     static let quickActionsSpacing: CGFloat = 10
     static let quickActionsHorizontalPadding: CGFloat = 16
     static let quickActionsVerticalPadding: CGFloat = 10
-
+    
     // MARK: - Input bar
-
+    
     static let inputBarPadding: CGFloat = 16
     static let inputSpacing: CGFloat = 10
     static let inputFont: Font = .system(size: 16, weight: .regular)

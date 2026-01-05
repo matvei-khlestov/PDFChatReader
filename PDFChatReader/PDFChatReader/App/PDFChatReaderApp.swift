@@ -14,8 +14,12 @@ struct PDFChatReaderApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PDFReaderView(container: container)
-                .environmentObject(container)
+            PDFReaderView(
+                viewModel: container.makePDFReaderViewModel(),
+                makeChatView: { contextProvider in
+                    container.makeChatView(contextProvider: contextProvider)
+                }
+            )
         }
     }
 }

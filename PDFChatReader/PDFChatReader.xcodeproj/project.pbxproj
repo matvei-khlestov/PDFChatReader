@@ -26,6 +26,20 @@
 		A091BE542F0A20A900DA4E8B /* YandexGPTServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE532F0A20A900DA4E8B /* YandexGPTServicing.swift */; };
 		A091BE562F0A20BF00DA4E8B /* PDFContextProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */; };
 		A091BE682F0B153E00DA4E8B /* PDFViewPageObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE672F0B153E00DA4E8B /* PDFViewPageObserver.swift */; };
+		A091BE6B2F0B3D5D00DA4E8B /* PDFImporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE6A2F0B3D5D00DA4E8B /* PDFImporting.swift */; };
+		A091BE6D2F0B3D7D00DA4E8B /* PDFFileImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE6C2F0B3D7D00DA4E8B /* PDFFileImporter.swift */; };
+		A091BE7A2F0B5A4C00DA4E8B /* AssistantMessageMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE792F0B5A4C00DA4E8B /* AssistantMessageMenu.swift */; };
+		A091BE7C2F0B666D00DA4E8B /* ClipboardServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE7B2F0B666D00DA4E8B /* ClipboardServicing.swift */; };
+		A091BE7E2F0B669900DA4E8B /* SystemClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE7D2F0B669900DA4E8B /* SystemClipboardService.swift */; };
+		A091BE802F0B66CA00DA4E8B /* ChatCompletionServicing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE7F2F0B66CA00DA4E8B /* ChatCompletionServicing.swift */; };
+		A091BE822F0B66F100DA4E8B /* YandexChatCompletionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE812F0B66F100DA4E8B /* YandexChatCompletionService.swift */; };
+		A091BE842F0B671B00DA4E8B /* PromptBuilding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE832F0B671B00DA4E8B /* PromptBuilding.swift */; };
+		A091BE872F0B73CD00DA4E8B /* YandexGPTRequestBuilding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE862F0B73CD00DA4E8B /* YandexGPTRequestBuilding.swift */; };
+		A091BE892F0B73F200DA4E8B /* YandexGPTRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE882F0B73F200DA4E8B /* YandexGPTRequestBuilder.swift */; };
+		A091BE8B2F0B740400DA4E8B /* HTTPResponseValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE8A2F0B740400DA4E8B /* HTTPResponseValidating.swift */; };
+		A091BE8D2F0B741500DA4E8B /* DefaultHTTPResponseValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE8C2F0B741500DA4E8B /* DefaultHTTPResponseValidator.swift */; };
+		A091BE8F2F0B742A00DA4E8B /* YandexGPTResponseDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE8E2F0B742A00DA4E8B /* YandexGPTResponseDecoding.swift */; };
+		A091BE912F0B743900DA4E8B /* YandexGPTCompletionResponseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A091BE902F0B743900DA4E8B /* YandexGPTCompletionResponseDecoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +63,20 @@
 		A091BE532F0A20A900DA4E8B /* YandexGPTServicing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexGPTServicing.swift; sourceTree = "<group>"; };
 		A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFContextProviding.swift; sourceTree = "<group>"; };
 		A091BE672F0B153E00DA4E8B /* PDFViewPageObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewPageObserver.swift; sourceTree = "<group>"; };
+		A091BE6A2F0B3D5D00DA4E8B /* PDFImporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFImporting.swift; sourceTree = "<group>"; };
+		A091BE6C2F0B3D7D00DA4E8B /* PDFFileImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFFileImporter.swift; sourceTree = "<group>"; };
+		A091BE792F0B5A4C00DA4E8B /* AssistantMessageMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistantMessageMenu.swift; sourceTree = "<group>"; };
+		A091BE7B2F0B666D00DA4E8B /* ClipboardServicing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardServicing.swift; sourceTree = "<group>"; };
+		A091BE7D2F0B669900DA4E8B /* SystemClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemClipboardService.swift; sourceTree = "<group>"; };
+		A091BE7F2F0B66CA00DA4E8B /* ChatCompletionServicing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCompletionServicing.swift; sourceTree = "<group>"; };
+		A091BE812F0B66F100DA4E8B /* YandexChatCompletionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexChatCompletionService.swift; sourceTree = "<group>"; };
+		A091BE832F0B671B00DA4E8B /* PromptBuilding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptBuilding.swift; sourceTree = "<group>"; };
+		A091BE862F0B73CD00DA4E8B /* YandexGPTRequestBuilding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexGPTRequestBuilding.swift; sourceTree = "<group>"; };
+		A091BE882F0B73F200DA4E8B /* YandexGPTRequestBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexGPTRequestBuilder.swift; sourceTree = "<group>"; };
+		A091BE8A2F0B740400DA4E8B /* HTTPResponseValidating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponseValidating.swift; sourceTree = "<group>"; };
+		A091BE8C2F0B741500DA4E8B /* DefaultHTTPResponseValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHTTPResponseValidator.swift; sourceTree = "<group>"; };
+		A091BE8E2F0B742A00DA4E8B /* YandexGPTResponseDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexGPTResponseDecoding.swift; sourceTree = "<group>"; };
+		A091BE902F0B743900DA4E8B /* YandexGPTCompletionResponseDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YandexGPTCompletionResponseDecoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,10 +149,9 @@
 		A091BE202F098B3B00DA4E8B /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				A091BE2C2F098E4700DA4E8B /* PromptBuilder.swift */,
-				A091BE2E2F098E7900DA4E8B /* PDFContextProvider.swift */,
-				A091BE302F098E9E00DA4E8B /* YandexGPTService.swift */,
-				A091BE502F0A1FF000DA4E8B /* ServiceError.swift */,
+				A091BE852F0B73B300DA4E8B /* YandexGPT */,
+				A091BE9A2F0B791B00DA4E8B /* PDF */,
+				A091BE952F0B76E700DA4E8B /* System */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -142,10 +169,9 @@
 		A091BE222F098BFA00DA4E8B /* PDFReader */ = {
 			isa = PBXGroup;
 			children = (
-				A091BE172F098A4E00DA4E8B /* PDFReaderView.swift */,
-				A091BE342F098F6800DA4E8B /* PDFReaderViewModel.swift */,
-				A091BE322F098F1B00DA4E8B /* PDFKitViewRepresentable.swift */,
-				A091BE672F0B153E00DA4E8B /* PDFViewPageObserver.swift */,
+				A091BE722F0B3FC000DA4E8B /* View */,
+				A091BE732F0B3FD400DA4E8B /* ViewModel */,
+				A091BE752F0B3FF600DA4E8B /* Components */,
 			);
 			path = PDFReader;
 			sourceTree = "<group>";
@@ -153,8 +179,9 @@
 		A091BE242F098C2600DA4E8B /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				A091BE382F09909900DA4E8B /* ChatView.swift */,
-				A091BE362F09902500DA4E8B /* ChatViewModel.swift */,
+				A091BE762F0B400800DA4E8B /* View */,
+				A091BE772F0B401500DA4E8B /* ViewModel */,
+				A091BE782F0B5A1800DA4E8B /* Components */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -162,8 +189,6 @@
 		A091BE522F0A207800DA4E8B /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				A091BE532F0A20A900DA4E8B /* YandexGPTServicing.swift */,
-				A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -174,6 +199,191 @@
 				A091BE212F098B5100DA4E8B /* Models */,
 			);
 			path = Domain;
+			sourceTree = "<group>";
+		};
+		A091BE722F0B3FC000DA4E8B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE172F098A4E00DA4E8B /* PDFReaderView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		A091BE732F0B3FD400DA4E8B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE342F098F6800DA4E8B /* PDFReaderViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		A091BE752F0B3FF600DA4E8B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE322F098F1B00DA4E8B /* PDFKitViewRepresentable.swift */,
+				A091BE672F0B153E00DA4E8B /* PDFViewPageObserver.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A091BE762F0B400800DA4E8B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE382F09909900DA4E8B /* ChatView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		A091BE772F0B401500DA4E8B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE362F09902500DA4E8B /* ChatViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		A091BE782F0B5A1800DA4E8B /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE792F0B5A4C00DA4E8B /* AssistantMessageMenu.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A091BE852F0B73B300DA4E8B /* YandexGPT */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE922F0B766000DA4E8B /* API */,
+				A091BE972F0B773000DA4E8B /* Decoders */,
+				A091BE962F0B771200DA4E8B /* Validators */,
+				A091BE932F0B76A100DA4E8B /* Builders */,
+				A091BE942F0B76B300DA4E8B /* Errors */,
+				A091BE982F0B774200DA4E8B /* Protocols */,
+			);
+			path = YandexGPT;
+			sourceTree = "<group>";
+		};
+		A091BE922F0B766000DA4E8B /* API */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE302F098E9E00DA4E8B /* YandexGPTService.swift */,
+				A091BE812F0B66F100DA4E8B /* YandexChatCompletionService.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		A091BE932F0B76A100DA4E8B /* Builders */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE2C2F098E4700DA4E8B /* PromptBuilder.swift */,
+				A091BE882F0B73F200DA4E8B /* YandexGPTRequestBuilder.swift */,
+			);
+			path = Builders;
+			sourceTree = "<group>";
+		};
+		A091BE942F0B76B300DA4E8B /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE502F0A1FF000DA4E8B /* ServiceError.swift */,
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
+		A091BE952F0B76E700DA4E8B /* System */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE9C2F0B798300DA4E8B /* Clipboard */,
+			);
+			path = System;
+			sourceTree = "<group>";
+		};
+		A091BE962F0B771200DA4E8B /* Validators */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE8C2F0B741500DA4E8B /* DefaultHTTPResponseValidator.swift */,
+			);
+			path = Validators;
+			sourceTree = "<group>";
+		};
+		A091BE972F0B773000DA4E8B /* Decoders */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE902F0B743900DA4E8B /* YandexGPTCompletionResponseDecoder.swift */,
+			);
+			path = Decoders;
+			sourceTree = "<group>";
+		};
+		A091BE982F0B774200DA4E8B /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE532F0A20A900DA4E8B /* YandexGPTServicing.swift */,
+				A091BE7F2F0B66CA00DA4E8B /* ChatCompletionServicing.swift */,
+				A091BE862F0B73CD00DA4E8B /* YandexGPTRequestBuilding.swift */,
+				A091BE8A2F0B740400DA4E8B /* HTTPResponseValidating.swift */,
+				A091BE8E2F0B742A00DA4E8B /* YandexGPTResponseDecoding.swift */,
+				A091BE832F0B671B00DA4E8B /* PromptBuilding.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		A091BE9A2F0B791B00DA4E8B /* PDF */ = {
+			isa = PBXGroup;
+			children = (
+				A091BEA02F0B7A3800DA4E8B /* Context */,
+				A091BE9B2F0B792C00DA4E8B /* Import */,
+			);
+			path = PDF;
+			sourceTree = "<group>";
+		};
+		A091BE9B2F0B792C00DA4E8B /* Import */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE6C2F0B3D7D00DA4E8B /* PDFFileImporter.swift */,
+				A091BE9F2F0B79EC00DA4E8B /* Protocols */,
+			);
+			path = Import;
+			sourceTree = "<group>";
+		};
+		A091BE9C2F0B798300DA4E8B /* Clipboard */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE7D2F0B669900DA4E8B /* SystemClipboardService.swift */,
+				A091BE9D2F0B798900DA4E8B /* Protocols */,
+			);
+			path = Clipboard;
+			sourceTree = "<group>";
+		};
+		A091BE9D2F0B798900DA4E8B /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE7B2F0B666D00DA4E8B /* ClipboardServicing.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		A091BE9F2F0B79EC00DA4E8B /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE6A2F0B3D5D00DA4E8B /* PDFImporting.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		A091BEA02F0B7A3800DA4E8B /* Context */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE2E2F098E7900DA4E8B /* PDFContextProvider.swift */,
+				A091BEA12F0B7A5000DA4E8B /* Protocols */,
+			);
+			path = Context;
+			sourceTree = "<group>";
+		};
+		A091BEA12F0B7A5000DA4E8B /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A091BE552F0A20BF00DA4E8B /* PDFContextProviding.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,21 +458,35 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A091BE7E2F0B669900DA4E8B /* SystemClipboardService.swift in Sources */,
+				A091BE6D2F0B3D7D00DA4E8B /* PDFFileImporter.swift in Sources */,
 				A091BE512F0A1FF000DA4E8B /* ServiceError.swift in Sources */,
 				A091BE542F0A20A900DA4E8B /* YandexGPTServicing.swift in Sources */,
+				A091BE7A2F0B5A4C00DA4E8B /* AssistantMessageMenu.swift in Sources */,
 				A091BE272F098DC700DA4E8B /* ChatMessage.swift in Sources */,
 				A091BE2D2F098E4700DA4E8B /* PromptBuilder.swift in Sources */,
+				A091BE8D2F0B741500DA4E8B /* DefaultHTTPResponseValidator.swift in Sources */,
+				A091BE8F2F0B742A00DA4E8B /* YandexGPTResponseDecoding.swift in Sources */,
 				A091BE1A2F098A4E00DA4E8B /* PDFReaderView.swift in Sources */,
+				A091BE892F0B73F200DA4E8B /* YandexGPTRequestBuilder.swift in Sources */,
+				A091BE872F0B73CD00DA4E8B /* YandexGPTRequestBuilding.swift in Sources */,
+				A091BE822F0B66F100DA4E8B /* YandexChatCompletionService.swift in Sources */,
 				A091BE4D2F0A1EA100DA4E8B /* AppSecrets.swift in Sources */,
 				A091BE332F098F1B00DA4E8B /* PDFKitViewRepresentable.swift in Sources */,
 				A091BE392F09909900DA4E8B /* ChatView.swift in Sources */,
 				A091BE682F0B153E00DA4E8B /* PDFViewPageObserver.swift in Sources */,
+				A091BE7C2F0B666D00DA4E8B /* ClipboardServicing.swift in Sources */,
 				A091BE1B2F098A4E00DA4E8B /* PDFChatReaderApp.swift in Sources */,
 				A091BE2B2F098E1A00DA4E8B /* YandexGPTDTO.swift in Sources */,
 				A091BE352F098F6800DA4E8B /* PDFReaderViewModel.swift in Sources */,
+				A091BE842F0B671B00DA4E8B /* PromptBuilding.swift in Sources */,
+				A091BE912F0B743900DA4E8B /* YandexGPTCompletionResponseDecoder.swift in Sources */,
+				A091BE6B2F0B3D5D00DA4E8B /* PDFImporting.swift in Sources */,
 				A091BE2F2F098E7900DA4E8B /* PDFContextProvider.swift in Sources */,
+				A091BE8B2F0B740400DA4E8B /* HTTPResponseValidating.swift in Sources */,
 				A091BE312F098E9E00DA4E8B /* YandexGPTService.swift in Sources */,
 				A091BE372F09902500DA4E8B /* ChatViewModel.swift in Sources */,
+				A091BE802F0B66CA00DA4E8B /* ChatCompletionServicing.swift in Sources */,
 				A091BE562F0A20BF00DA4E8B /* PDFContextProviding.swift in Sources */,
 				A091BE292F098DEC00DA4E8B /* QuickAction.swift in Sources */,
 				A091BE4F2F0A1EBF00DA4E8B /* AppContainer.swift in Sources */,

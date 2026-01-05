@@ -5,12 +5,14 @@
 //  Created by Matvei Khlestov on 03.01.2026.
 //
 
+
 import Foundation
 import Combine
-import UIKit
 
 @MainActor
 final class ChatViewModel: ObservableObject {
+
+    // MARK: - Types
 
     enum AssistantAction {
         case copy
@@ -18,24 +20,31 @@ final class ChatViewModel: ObservableObject {
         case explainSimpler
     }
 
+    // MARK: - Published
+
     @Published var messages: [ChatMessage] = []
     @Published var inputText: String = ""
     @Published var isLoading: Bool = false
     @Published var errorText: String?
+    @Published var scope: ChatScope = .page
 
-    private let gpt: YandexGPTServicing
-    private let promptBuilder: PromptBuilder
-    private let modelUri: String
-    private let contextProvider: () -> String
+    // MARK: - Dependencies
+
+    private let completionService: ChatCompletionServicing
+    private let clipboard: ClipboardServicing
+    private let promptBuilder: PromptBuilding
+    private let contextProvider: (ChatScope) -> String
+
+    // MARK: - Init
 
     init(
-        gpt: YandexGPTServicing,
-        modelUri: String,
-        contextProvider: @escaping () -> String,
-        promptBuilder: PromptBuilder = PromptBuilder()
+        completionService: ChatCompletionServicing,
+        clipboard: ClipboardServicing,
+        contextProvider: @escaping (ChatScope) -> String,
+        promptBuilder: PromptBuilding
     ) {
-        self.gpt = gpt
-        self.modelUri = modelUri
+        self.completionService = completionService
+        self.clipboard = clipboard
         self.contextProvider = contextProvider
         self.promptBuilder = promptBuilder
 
@@ -47,45 +56,77 @@ final class ChatViewModel: ObservableObject {
         ]
     }
 
+    // MARK: - Public
+
+    func updateScope(_ scope: ChatScope) {
+        self.scope = scope
+    }
+
     func runQuickAction(_ action: QuickAction) {
-        let context = contextProvider()
+        let scopeSnapshot = scope
+
+        let context = contextProvider(scopeSnapshot)
         guard !context.isEmpty else {
-            errorText = "No text found on this page."
+            errorText = scopeSnapshot == .page
+            ? "No text found on this page."
+            : "No text found in this document."
             return
         }
 
         let system = promptBuilder.systemPrompt()
-        let user = promptBuilder.quickActionPrompt(action, context: context)
+        let user = promptBuilder.quickActionPrompt(
+            action,
+            context: context,
+            scope: scopeSnapshot
+        )
 
         Task { [weak self] in
-            await self?.send(system: system, user: user, displayUserText: nil)
+            await self?.send(
+                system: system,
+                user: user,
+                displayUserText: nil,
+                scope: scopeSnapshot
+            )
         }
     }
 
     func sendUserQuestion() {
+        let scopeSnapshot = scope
+
         let question = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !question.isEmpty else { return }
 
         inputText = ""
 
-        let context = contextProvider()
+        let context = contextProvider(scopeSnapshot)
         guard !context.isEmpty else {
-            errorText = "No text found on this page."
+            errorText = scopeSnapshot == .page
+            ? "No text found on this page."
+            : "No text found in this document."
             return
         }
 
         let system = promptBuilder.systemPrompt()
-        let user = promptBuilder.chatPrompt(question: question, context: context)
+        let user = promptBuilder.chatPrompt(
+            question: question,
+            context: context,
+            scope: scopeSnapshot
+        )
 
         Task { [weak self] in
-            await self?.send(system: system, user: user, displayUserText: question)
+            await self?.send(
+                system: system,
+                user: user,
+                displayUserText: question,
+                scope: scopeSnapshot
+            )
         }
     }
 
     func handleAssistantAction(_ action: AssistantAction, message: ChatMessage) {
         switch action {
         case .copy:
-            UIPasteboard.general.string = message.text
+            clipboard.copy(message.text)
 
         case .regenerate:
             Task { [weak self] in
@@ -99,15 +140,40 @@ final class ChatViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Private
+    // MARK: - Private: Common helpers
+
+    private func beginLoading() {
+        isLoading = true
+        errorText = nil
+    }
+
+    private func endLoading() {
+        isLoading = false
+    }
+
+    private func complete(
+        system: String,
+        user: String,
+        temperature: Double,
+        maxTokens: Int
+    ) async throws -> String {
+        try await completionService.complete(
+            system: system,
+            user: user,
+            temperature: temperature,
+            maxTokens: maxTokens
+        )
+    }
+
+    // MARK: - Private: Requests
 
     private func send(
         system: String,
         user: String,
-        displayUserText: String?
+        displayUserText: String?,
+        scope: ChatScope
     ) async {
-        isLoading = true
-        errorText = nil
+        beginLoading()
 
         if let displayUserText {
             messages.append(ChatMessage(role: .user, text: displayUserText))
@@ -119,16 +185,14 @@ final class ChatViewModel: ObservableObject {
             systemPrompt: system,
             userPrompt: user,
             temperature: 0.3,
-            maxTokens: 900
+            maxTokens: 900,
+            scope: scope
         )
 
         do {
-            let response = try await gpt.complete(
-                modelUri: modelUri,
-                messages: [
-                    ChatMessage(role: .system, text: system),
-                    ChatMessage(role: .user, text: user)
-                ],
+            let response = try await complete(
+                system: system,
+                user: user,
                 temperature: request.temperature,
                 maxTokens: request.maxTokens
             )
@@ -136,10 +200,10 @@ final class ChatViewModel: ObservableObject {
             messages.append(
                 ChatMessage(role: .assistant, text: response, request: request)
             )
-            isLoading = false
+            endLoading()
         } catch {
             errorText = error.localizedDescription
-            isLoading = false
+            endLoading()
         }
     }
 
@@ -152,25 +216,21 @@ final class ChatViewModel: ObservableObject {
             return
         }
 
-        isLoading = true
-        errorText = nil
+        beginLoading()
 
         do {
-            let response = try await gpt.complete(
-                modelUri: modelUri,
-                messages: [
-                    ChatMessage(role: .system, text: request.systemPrompt),
-                    ChatMessage(role: .user, text: request.userPrompt)
-                ],
+            let response = try await complete(
+                system: request.systemPrompt,
+                user: request.userPrompt,
                 temperature: request.temperature,
                 maxTokens: request.maxTokens
             )
 
             messages[index].text = response
-            isLoading = false
+            endLoading()
         } catch {
             errorText = error.localizedDescription
-            isLoading = false
+            endLoading()
         }
     }
 
@@ -183,18 +243,16 @@ final class ChatViewModel: ObservableObject {
             return
         }
 
-        isLoading = true
-        errorText = nil
+        beginLoading()
 
-        let userPrompt = promptBuilder.explainSimplerUserPrompt(baseUserPrompt: request.userPrompt)
+        let userPrompt = promptBuilder.explainSimplerUserPrompt(
+            baseUserPrompt: request.userPrompt
+        )
 
         do {
-            let response = try await gpt.complete(
-                modelUri: modelUri,
-                messages: [
-                    ChatMessage(role: .system, text: request.systemPrompt),
-                    ChatMessage(role: .user, text: userPrompt)
-                ],
+            let response = try await complete(
+                system: request.systemPrompt,
+                user: userPrompt,
                 temperature: request.temperature,
                 maxTokens: request.maxTokens
             )
@@ -204,12 +262,13 @@ final class ChatViewModel: ObservableObject {
                 systemPrompt: request.systemPrompt,
                 userPrompt: userPrompt,
                 temperature: request.temperature,
-                maxTokens: request.maxTokens
+                maxTokens: request.maxTokens,
+                scope: request.scope
             )
-            isLoading = false
+            endLoading()
         } catch {
             errorText = error.localizedDescription
-            isLoading = false
+            endLoading()
         }
     }
 }
