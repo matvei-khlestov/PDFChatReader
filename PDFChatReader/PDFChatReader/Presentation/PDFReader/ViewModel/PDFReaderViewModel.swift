@@ -56,12 +56,16 @@ final class PDFReaderViewModel: ObservableObject {
     }
 
     func context(for scope: ChatScope) -> String {
+        let rawContext: String
+        
         switch scope {
         case .page:
-            return currentPageText
+            rawContext = currentPageText
         case .document:
-            return documentText
+            rawContext = documentText
         }
+        
+        return String(rawContext.prefix(AIContextLimit.maxCharacters))
     }
 
     // MARK: - Private
