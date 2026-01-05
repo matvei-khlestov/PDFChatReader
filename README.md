@@ -7,9 +7,9 @@ The project focuses on clean architecture, predictable state-driven UI, and a pr
 <p align="center">
   <img
     width="1600"
-    height="2028"
+    height="2030"
     alt="PDFReader_Mockup"
-    src="https://github.com/user-attachments/assets/85794387-057c-4db6-8d9a-e0ded4a1e474"
+    src="https://github.com/user-attachments/assets/5dfc1f14-dae6-4183-b87d-3f9669508045"
   />
 </p>
 
