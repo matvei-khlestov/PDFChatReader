@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct PromptBuilder {
-    
+struct PromptBuilder: PromptBuilding {
+
     func systemPrompt() -> String {
         """
         Ты — полезный помощник.
@@ -17,58 +17,60 @@ struct PromptBuilder {
         Отвечай кратко, логично и структурировано.
         """
     }
-    
+
     func quickActionPrompt(
         _ action: QuickAction,
-        context: String
+        context: String,
+        scope: ChatScope
     ) -> String {
         switch action {
         case .summarize:
             return """
-            Контекст (текст страницы PDF):
+            Контекст (\(scope.rawValue)):
             \(context)
-            
-            Задача: Сформулируй краткое резюме страницы в виде 5–7 пунктов.
+
+            Задача: Сформулируй краткое резюме в виде 5–7 пунктов.
             """
-            
+
         case .explain:
             return """
-            Контекст (текст страницы PDF):
+            Контекст (\(scope.rawValue)):
             \(context)
-            
+
             Задача: Объясни содержание простым и понятным языком,
             как если бы ты объяснял новичку. Используй короткие абзацы.
             """
-            
+
         case .keyPoints:
             return """
-            Контекст (текст страницы PDF):
+            Контекст (\(scope.rawValue)):
             \(context)
-            
+
             Задача:
             1) Выдели ключевые идеи (в виде списка)
             2) Выдели важные термины (термин — краткое определение)
             """
         }
     }
-    
+
     func chatPrompt(
         question: String,
-        context: String
+        context: String,
+        scope: ChatScope
     ) -> String {
         """
-        Контекст (текст страницы PDF):
+        Контекст (\(scope.rawValue)):
         \(context)
-        
+
         Вопрос пользователя:
         \(question)
         """
     }
-    
+
     func explainSimplerUserPrompt(baseUserPrompt: String) -> String {
         """
         \(baseUserPrompt)
-        
+
         Дополнительная задача:
         Объясни проще, максимально понятно новичку. 3–6 коротких предложений.
         Если нужно — приведи простой пример.
