@@ -63,17 +63,17 @@ The solution is designed to scale without turning ViewModels into monoliths, mai
 ## Tech Stack
 
 - Swift 5.9+
-- SwiftUI — UI construction and state management
-- Combine — reactive state and data updates
-- Swift Concurrency (async / await) — asynchronous networking and business logic
-- PDFKit — PDF rendering and text analysis
-- URLSession — network communication
-- YandexGPT API — LLM backend for the AI assistant
-- Protocol-Oriented Design — loose coupling and testability
-- MVVM — architectural separation of concerns
-- SOLID — service-layer design principles
-- UIKit (used selectively) — Launch Screen, system services
-- Xcode + iOS Simulator — development and debugging environment
+- SwiftUI
+- Combine
+- Swift Concurrency (async / await)
+- PDFKit
+- URLSession
+- YandexGPT API
+- Protocol-Oriented Design
+- MVVM
+- SOLID
+- UIKit (used selectively)
+- Xcode + iOS Simulator
 
 ## Disclaimer
 
